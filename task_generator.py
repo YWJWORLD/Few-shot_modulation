@@ -85,9 +85,9 @@ class IQTask(object):
 
 class FewShotDataset(Dataset):
 
-    def __init__(self, task, split='train', transform=None, target_transform=None):
-        self.transform = transform # Torch operations on the input image
-        self.target_transform = target_transform
+    def __init__(self, task, split='train'):
+        # self.transform = transform # Torch operations on the input image
+        # self.target_transform = target_transform
         self.task = task
         self.split = split
         self.iq_data = self.task.train_samples if self.split == 'train' else self.task.test_samples
@@ -106,11 +106,17 @@ class MiniImagenet(FewShotDataset):
 
     def __getitem__(self, idx):
         iq = self.iq_data[idx]
-        if self.transform is not None:
-            iq = self.transform(iq)
+        # if self.transform is not None:
+            # iq = self.transform(iq)
         label = self.labels[idx]
-        if self.target_transform is not None:
-            label = self.target_transform(label)
+        # if self.target_transform is not None:
+            # label = self.target_transform(label)
+            
+        iq = torch.tensor(iq, dtype=torch.float32)
+        label = torch.tensor(label, dtype=torch.int64)
+        
+        # iq = torch.FloatTensor(iq)
+        # label = torch.FloatTensor(label)
         return iq, label
 
 
@@ -142,8 +148,9 @@ class ClassBalancedSampler(Sampler):
 
 def get_mini_imagenet_data_loader(task, num_per_class=1, split='train',shuffle = False):
     #normalize = transforms.Normalize(mean=[0.92206, 0.92206, 0.92206], std=[0.08426, 0.08426, 0.08426])
-    dataset = MiniImagenet(task,split=split,transform=transforms.Compose([transforms.ToTensor()]))
-
+    # dataset = MiniImagenet(task,split=split,tranksform=transforms.Compose([transforms.ToTensor()]))
+    dataset = MiniImagenet(task,split=split)
+    
     if split == 'train':
         sampler = ClassBalancedSampler(num_per_class, task.num_classes, task.train_num,shuffle=shuffle)
     else:
