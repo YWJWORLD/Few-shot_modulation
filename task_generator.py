@@ -30,7 +30,7 @@ def mini_imagenet_folders():
     
     metatrain_mods = ['8PSK','AM-DSB','BPSK','GFSK','PAM4','QAM64']
     
-    metatest_mods = ['QPSK','AM-SSB','QAM64','CPFSK','WBFM']
+    metatest_mods = ['QPSK','AM-SSB','QAM16','CPFSK','WBFM']
     
     random.seed(1)
     random.shuffle(metatrain_mods)
@@ -57,7 +57,8 @@ class IQTask(object):
 
         with open(path,'rb') as f:
             rfdata = pickle.load(f,encoding='latin1')
-            
+        
+        lbl 
         # Make empty array for concat
         self.train_samples= np.array([]).reshape(0,2,128)
         self.test_samples = np.array([]).reshape(0,2,128)
