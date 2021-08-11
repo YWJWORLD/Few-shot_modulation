@@ -53,12 +53,11 @@ class IQTask(object):
         class_folders = random.sample(self.character_folders,self.num_classes)
         labels = np.array(range(len(class_folders)))
         labels = dict(zip(class_folders, labels))
-        snr = 18
+        # snr = 18
 
         with open(path,'rb') as f:
             rfdata = pickle.load(f,encoding='latin1')
         
-        lbl 
         # Make empty array for concat
         self.train_samples= np.array([]).reshape(0,2,128)
         self.test_samples = np.array([]).reshape(0,2,128)
@@ -67,7 +66,7 @@ class IQTask(object):
         self.test_labels = []
         
         for mod in class_folders:
-            temp = rfdata[mod,snr]
+            temp = rfdata[mod]
             # print(temp.shape)
             ind = np.arange(temp.shape[0])
             np.random.shuffle(ind)
