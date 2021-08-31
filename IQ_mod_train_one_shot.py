@@ -44,7 +44,8 @@ TEST_EPISODE = args.test_episode
 LEARNING_RATE = args.learning_rate
 GPU = args.gpu
 HIDDEN_UNIT = args.hidden_unit
-path = '/home/wjyun/ML/Few-shot/relation_net/LearningToCompare_FSL/datas/RadioML/RML2016.10a_dict.dat'
+# path = '/home/wjyun/ML/Few-shot/relation_net/LearningToCompare_FSL/datas/RadioML/RML2016.10a_dict.dat'
+path = './datas/2018_SNR_30.hdf5'
 def mean_confidence_interval(data, confidence=0.95):
     a = 1.0*np.array(data)
     n = len(a)
@@ -238,11 +239,12 @@ def main():
             for i in range(TEST_EPISODE):
                 total_rewards = 0
                 counter = 0
-                task = tg.IQTask(character_folders=metatest_mods,num_classes=CLASS_NUM,train_num=SAMPLE_NUM_PER_CLASS,test_num=SAMPLE_NUM_PER_CLASS,path=path)
+                task = tg.IQTask(metatest_mods,CLASS_NUM,1,15,path)
+                # task = tg.IQTask(character_folders=metatest_mods,num_classes=CLASS_NUM,train_num=SAMPLE_NUM_PER_CLASS,test_num=SAMPLE_NUM_PER_CLASS,path=path)
                 sample_dataloader = tg.get_mini_imagenet_data_loader(task,num_per_class=1,split="train",shuffle=False)
-                test_dataloader = tg.get_data_loader(task,num_per_class=SAMPLE_NUM_PER_CLASS,split="test",shuffle=True)
-                # num_per_class = 3
-                # test_dataloader = tg.get_mini_imagenet_data_loader(task,num_per_class=num_per_class,split="test",shuffle=True)
+                num_per_class = 3
+                # test_dataloader = tg.get_mini_loader(task,num_per_class=SAMPLE_NUM_PER_CLASS,split="test",shuffle=True)
+                test_dataloader = tg.get_mini_imagenet_data_loader(task,num_per_class=num_per_class,split="test",shuffle=True)
                 sample_images,sample_labels = sample_dataloader.__iter__().next()
                 for test_images,test_labels in test_dataloader:
                     batch_size = test_labels.shape[0]
