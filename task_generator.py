@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 from torch.utils.data.sampler import Sampler
-import pandas as pd
 
 def imshow(img):
     npimg = img.numpy()
@@ -29,9 +28,9 @@ class Rotate(object):
 def mini_imagenet_folders():
     
     
-    metatrain_mods = ['8PSK','AM-DSB','BPSK','GFSK','PAM4','QAM64']
+    metatrain_mods = ['128APSK',  '64QAM',  'AM-DSB-SC','16PSK','16APSK','8PSK','8ASK','AM-DSB-WC','256QAM','GMSK', '32APSK', '16QAM']
     
-    metatest_mods = ['QPSK','AM-SSB','QAM64','CPFSK','WBFM']
+    metatest_mods = ['64APSK','128QAM','BPSK','32PSK','32QAM','OOK']
     
     random.seed(1)
     random.shuffle(metatrain_mods)
@@ -54,24 +53,27 @@ class IQTask(object):
         class_folders = random.sample(self.character_folders,self.num_classes)
         labels = np.array(range(len(class_folders)))
         labels = dict(zip(class_folders, labels))
-        snr = 18
+        # snr = 18
 
-        with open(path,'rb') as f:
-            rfdata = pickle.load(f,encoding='latin1')
-            
+        dataset = h5py.File(path,'r')
+        rfdata = dataset['data']
+        rflabel = dataset['label']
+        # with open(path,'rb') as f:
+        #     rfdata = pickle.load(f,encoding='latin1')
+        
         # Make empty array for concat
-        self.train_samples= np.array([]).reshape(0,2,128)
-        self.test_samples = np.array([]).reshape(0,2,128)
+        self.train_samples= np.array([]).reshape(0,2,1024)
+        self.test_samples = np.array([]).reshape(0,2,1024)
         
         self.train_labels =[]
         self.test_labels = []
-        
+
         for mod in class_folders:
-            temp = rfdata[mod,snr]
-            # print(temp.shape)
+            temp = rflabel[mod]
+            print(temp.shape)
             ind = np.arange(temp.shape[0])
             np.random.shuffle(ind)
-            temp = temp[ind]
+            temp = rfdata[ind]
             self.train_samples = np.vstack([self.train_samples, temp[:train_num]])
             # print(train_samples.shape)
             self.test_samples = np.vstack([self.test_samples, temp[train_num:train_num+test_num]])
